@@ -2,11 +2,13 @@ public class Raumschiff {
     private String name;
     private int PosX;
     private int PosY;
+    private Kapitaen captain;
 
-    public Raumschiff(String name, int PosX, int PosY) {
+    public Raumschiff(String name, int PosX, int PosY, Kapitaen captain) {
         this.name = name;
         this.PosX = PosX;
         this.PosY = PosY;
+        this.captain = captain;
     }
     public void fly(char direction) {
         switch (direction) {
@@ -43,5 +45,8 @@ public class Raumschiff {
     }
     public void setPosY(int posY) {
         PosY = posY;
+    }
+    public Kapitaen getCaptain() {
+        return captain;
     }
 }
