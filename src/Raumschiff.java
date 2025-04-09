@@ -1,8 +1,11 @@
+import java.util.ArrayList;
+
 public class Raumschiff {
     private String name;
     private int PosX;
     private int PosY;
     private Kapitaen captain;
+    private ArrayList<Ladung> cargoList = new ArrayList<>();
 
     public Raumschiff(String name, int PosX, int PosY, Kapitaen captain) {
         this.name = name;
@@ -27,6 +30,15 @@ public class Raumschiff {
     }
     public boolean validatePosition(int x, int y) {
         return x == this.getPosX() && y == this.getPosY();
+    }
+    public void deliverCargo(Ladung ladung) {
+        this.cargoList.remove(ladung);
+    }
+    public void receiveCargo(Ladung ladung) {
+        this.cargoList.add(ladung);
+    }
+    public ArrayList<Ladung> getCargoList() {
+        return cargoList;
     }
     public String getName() {
         return name;
