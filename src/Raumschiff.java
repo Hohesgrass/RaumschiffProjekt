@@ -25,8 +25,8 @@ public class Raumschiff {
                 this.setPosX(this.getPosX() + 1);
         }
     }
-    public boolean validatePosition(Raumschiff raumschiff) {
-        return raumschiff.getPosX() == this.getPosX() && raumschiff.getPosY() == this.getPosY();
+    public boolean validatePosition(int x, int y) {
+        return x == this.getPosX() && y == this.getPosY();
     }
     public String getName() {
         return name;
