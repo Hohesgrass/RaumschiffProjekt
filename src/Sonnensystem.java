@@ -1,3 +1,4 @@
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -44,6 +45,8 @@ public class Sonnensystem {
         while (!gameOver) {
 
             playerShip.fly(scan.next().charAt(0));
+            playerShip.receiveCargo(iron);
+            playerShip.deliverCargo(iron);
             //check for ship encounter
             for (Raumschiff r : ships) {
                 if (playerShip != r && playerShip.validatePosition(r.getPosX(), r.getPosY())) {
@@ -51,16 +54,46 @@ public class Sonnensystem {
                     break;
                 }
             }
-            //check planet encounter
             for (Planet p : planets) {
-                if (playerShip.validatePosition(p.getPosX(), p.getPosY())){
-                    System.out.println("Hier ist der Planet " + p.getName() + ", Atmosphäre: " + p.getAtmosphere());
-
-
+                if (playerShip.validatePosition(p.getPosX(), p.getPosY())) {
+                    printPlanetMenu(playerShip, p);
                     break;
                 }
             }
 
+        }
+    }
+    private static void printPlanetMenu(Raumschiff playerShip, Planet p){
+        boolean isDone = false;
+        while (!isDone) { 
+            ConsoleHelper.header("Hier ist der Planet " + p.getName() + ", Atmosphäre: " + p.getAtmosphere());
+            ConsoleHelper.printMenuElement(1, "Ladung Abholen");
+            ConsoleHelper.printMenuElement(2, "Ladung Einladung");
+            ConsoleHelper.printMenuElement(3, "Wegfliegen");
+            int choice1 = ConsoleHelper.inputInt("Wählen sie:", 1, 3);
+            int choice2;
+            Ladung selectedCargo;
+            switch (choice1) {
+                case 1 -> {
+                    choice2 = ConsoleHelper.printMenu("Gegenstand von Planet", p.getCargoList());
+                    selectedCargo = p.getCargoList().get(choice2-1);
+                    playerShip.receiveCargo(selectedCargo);
+                    p.removeCargo(selectedCargo);
+                }
+                case 2 -> {
+                    choice2 = ConsoleHelper.printMenu("Gegenstand von Planet", playerShip.getCargoList());
+                    selectedCargo = playerShip.getCargoList().get(choice2-1);
+                    playerShip.deliverCargo(selectedCargo);
+                    p.addCargo(selectedCargo);
+                }
+                case 3 -> {
+                    isDone = true;
+                    break;
+                }
+                default -> {
+                }
+            }
+            
         }
     }
 }

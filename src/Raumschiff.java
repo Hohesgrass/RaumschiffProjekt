@@ -15,17 +15,10 @@ public class Raumschiff {
     }
     public void fly(char direction) {
         switch (direction) {
-            case 'w':
-                this.setPosY(this.getPosY() + 1);
-                break;
-            case 'a':
-                this.setPosX(this.getPosX() - 1);
-                break;
-            case 's':
-                this.setPosY(this.getPosY() - 1);
-                break;
-            case 'd':
-                this.setPosX(this.getPosX() + 1);
+            case 'w' -> this.setPosY(this.getPosY() + 1);
+            case 'a' -> this.setPosX(this.getPosX() - 1);
+            case 's' -> this.setPosY(this.getPosY() - 1);
+            case 'd' -> this.setPosX(this.getPosX() + 1);
         }
     }
     public boolean validatePosition(int x, int y) {

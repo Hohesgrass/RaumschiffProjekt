@@ -21,4 +21,11 @@ public class Ladung {
     public void setEinheiten(int einheiten) {
         this.einheiten = einheiten;
     }
+    @Override
+    public String toString() {
+        return "Ladung{" +
+                "name='" + name + '\'' +
+                ", einheiten=" + einheiten +
+                '}';
+    }
 }
