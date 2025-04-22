@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Raumschiff {
     private String name;
@@ -6,6 +7,12 @@ public class Raumschiff {
     private int PosY;
     private Kapitaen captain;
     private ArrayList<Ladung> cargoList = new ArrayList<>();
+    private int HealthPoints;
+    private int energySupply;
+    private int energyShield;
+    private int weaponStrength;
+    private int maneuverability;
+
 
     public Raumschiff(String name, int PosX, int PosY, Kapitaen captain) {
         this.name = name;
@@ -20,6 +27,25 @@ public class Raumschiff {
             case 's' -> this.setPosY(this.getPosY() - 1);
             case 'd' -> this.setPosX(this.getPosX() + 1);
         }
+    }
+    public void attack(Raumschiff gegner) {
+        int diceResult = throwDice();
+        int damage = switch (diceResult) {
+            case 20 -> 50;
+            case 1 -> 0;
+            default -> diceResult + this.weaponStrength + this.energySupply;
+        };
+        gegner.defend(damage);
+
+    }
+    public void defend(int damage) {
+        int diceResult = throwDice();
+        int defendValue = switch (diceResult) {
+          case 20 -> 50;  
+          case 1 -> 0;
+          default -> diceResult + this.energyShield + this.captain.getSkill();
+        };
+        this.HealthPoints =- (defendValue - damage);
     }
     public boolean validatePosition(int x, int y) {
         return x == this.getPosX() && y == this.getPosY();
@@ -54,4 +80,17 @@ public class Raumschiff {
     public Kapitaen getCaptain() {
         return captain;
     }
+    private int throwDice(){
+        Random rnd = new Random();
+        return rnd.nextInt(20) + 1;
+    }
+
 }
+
+//TODO
+    /*
+     * Erweiterte Kampffunktionen hinzufügen
+     * Frontalangriff || gegner.Unversehrtheit = gegner.Unversehrtheit - (Waffenstärke x d20 / gegner.Schildstärke)
+     * Waffensystem angreifen || gegner.Waffenstärke = gegner.Waffenstärke - (Waffenstärke x d20 / gegner.unversehrtheit)
+     * Schilde Schwächen || 
+     */
