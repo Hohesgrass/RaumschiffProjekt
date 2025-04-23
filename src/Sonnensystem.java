@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 import java.util.Scanner;
 
+//A4.5 done
 public class Sonnensystem {
     static ArrayList<Raumschiff> ships;
     public static void main(String[] args) {
@@ -34,7 +35,6 @@ public class Sonnensystem {
             p.addCargo(gold);
             p.addCargo(aluminium);
         }
-
         Raumschiff playerShip = ships.getFirst();
         alexiaNova.setName("Alexia Starlight Nova");
         System.out.println("Sie fliegen das Raumschiff " + playerShip.getName() + ".");
