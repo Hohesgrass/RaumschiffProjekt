@@ -1,8 +1,8 @@
-import java.io.Console;
 import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Sonnensystem {
+    static ArrayList<Raumschiff> ships;
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
 
@@ -11,7 +11,7 @@ public class Sonnensystem {
         Kapitaen admiralZenithNightfall = new Kapitaen("Admiral Zenith Nightfall", 5, 10);
 
         //Ships
-        ArrayList<Raumschiff> ships = new ArrayList<>();
+        ships = new ArrayList<>();
         ships.add(new Raumschiff("Eos Nova", 0, 0, alexiaNova));
         ships.add(new Raumschiff("Aurora Quest", 0, 2, admiralZenithNightfall));
 
@@ -51,6 +51,7 @@ public class Sonnensystem {
             for (Raumschiff r : ships) {
                 if (playerShip != r && playerShip.validatePosition(r.getPosX(), r.getPosY())) {
                     System.out.println("Hier ist das Raumschiff " + r.getName());
+                    printShipMenu(playerShip, r);
                     break;
                 }
             }
@@ -60,8 +61,12 @@ public class Sonnensystem {
                     break;
                 }
             }
+            if (playerShip.getHealthPoints() <= 0) {
+                gameOver = true;
+            }
 
         }
+        System.out.println("Das Spiel ist beendet, du bist gestorben");
     }
     private static void printPlanetMenu(Raumschiff playerShip, Planet p){
         boolean isDone = false;
@@ -96,4 +101,61 @@ public class Sonnensystem {
             
         }
     }
+    public static void printShipMenu(Raumschiff playerShip, Raumschiff enemyShip){
+        boolean isDone = false;
+        while (!isDone) { 
+            ConsoleHelper.header("Hier ist das Raumschiff " + enemyShip.getName());
+            ConsoleHelper.printMenuElement(1, "Angreifen");
+            ConsoleHelper.printMenuElement(2, "Wegfliegen");
+            int choice1 = ConsoleHelper.inputInt("Wählen sie:", 1, 2);
+            boolean isAttackDone = false;
+            while(!isAttackDone){
+                switch (choice1) {
+                    case 1 -> {
+                        ConsoleHelper.printMenuElement(1, "Frontalangriff");
+                        ConsoleHelper.printMenuElement(2, "Schilde aufladen");
+                        ConsoleHelper.printMenuElement(3, "Fliehen");
+                        int choice2 = ConsoleHelper.inputInt("Wählen sie:", 1, 3);
+                        switch (choice2) {
+                            case 1-> {
+                                playerShip.attack(enemyShip);
+                                if (enemyShip.getHealthPoints() <= 0) {
+                                    System.out.println("Die " + enemyShip.getName() + " ist Zerstört");
+                                    ships.remove(enemyShip);
+                                    isAttackDone = true;
+                                    isDone = true;
+                                }
+                        }
+                            case 2-> {
+                                playerShip.rechargeShield();
+                        }
+                            case 3-> {
+                                if (playerShip.tryFleeFromEnemy(enemyShip)){
+                                    System.out.println("Fliehen erfolgreich");
+                                    isAttackDone = true;
+                                } else {
+                                    System.out.println("Fliehen fehlgeschlagen");
+                                }
+                        }
+                            default -> throw new AssertionError();
+                        }
+                    }
+                    case 2 -> {
+                        isDone = true;
+                        isAttackDone = true;
+                    }
+                    default -> throw new AssertionError();
+                }
+                enemyShip.attack(playerShip);
+                System.out.println("Die " + enemyShip.getName() + " hat dich getroffen");
+                System.out.println("Deine verbleibenden HP: " + playerShip.getHealthPoints());
+                System.out.println("Verbleibende HP der " + enemyShip.getName() + ": " + enemyShip.getHealthPoints());
+                if(playerShip.getHealthPoints() <= 0) {
+                    isAttackDone = true;
+                    isDone = true;
+                }
+            }
+        }
+    }
 }
+

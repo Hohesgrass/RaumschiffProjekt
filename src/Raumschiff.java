@@ -19,6 +19,7 @@ public class Raumschiff {
         this.PosX = PosX;
         this.PosY = PosY;
         this.captain = captain;
+        this.HealthPoints = 100;
     }
     public void fly(char direction) {
         switch (direction) {
@@ -45,7 +46,25 @@ public class Raumschiff {
           case 1 -> 0;
           default -> diceResult + this.energyShield + this.captain.getSkill();
         };
-        this.HealthPoints =- (defendValue - damage);
+        int finalDamage = defendValue - damage;
+        this.energyShield -= 2;
+        
+        if (finalDamage <= 0) {
+            finalDamage = 0;
+        }
+        if (finalDamage >= this.HealthPoints) {
+            finalDamage = 10000;
+        }
+        //System.out.println("HP: " + this.HealthPoints);
+        //System.out.println("Damage:" + finalDamage);
+        this.HealthPoints -= finalDamage;
+        //System.out.println("HP after attack: " + this.HealthPoints);
+    }
+    public void rechargeShield() {
+        this.energyShield =+ 2;
+    }
+    public boolean tryFleeFromEnemy(Raumschiff gegner) {
+        return (this.throwDice() + this.getManeuverability()) > (gegner.throwDice() + gegner.getManeuverability());
     }
     public boolean validatePosition(int x, int y) {
         return x == this.getPosX() && y == this.getPosY();
@@ -58,6 +77,9 @@ public class Raumschiff {
     }
     public ArrayList<Ladung> getCargoList() {
         return cargoList;
+    }
+    public int getManeuverability(){
+        return this.maneuverability;
     }
     public String getName() {
         return name;
@@ -83,6 +105,9 @@ public class Raumschiff {
     private int throwDice(){
         Random rnd = new Random();
         return rnd.nextInt(20) + 1;
+    }
+    public int getHealthPoints(){
+        return this.HealthPoints;
     }
 
 }
