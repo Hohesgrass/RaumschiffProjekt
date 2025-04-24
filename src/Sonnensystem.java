@@ -21,6 +21,16 @@ public class Sonnensystem {
         planets.add(new Planet("Auroria", true, 6, 1));
         planets.add(new Planet("Solara", false, 1, 0));
         planets.add(new Planet("Ktaris", true, 2, 0));
+        planets.add(new Planet("Müllhaufen", true, 5, 1));
+        planets.add(new Planet("Berlin", false, 5, 0));
+        planets.add(new Planet("Halle", true, 5, 4));
+
+        // Astroidfields
+        ArrayList<Asteroidenfeld> astroidFields = new ArrayList<>();
+        astroidFields.add(new Asteroidenfeld(0, 4, 20));
+        astroidFields.add(new Asteroidenfeld(0, -4, 20));
+        astroidFields.add(new Asteroidenfeld(1, 4, 5));
+
 
         //Cargo
         Ladung stones = new Ladung("Steine", 3);
@@ -59,6 +69,13 @@ public class Sonnensystem {
                 if (playerShip.validatePosition(p.getPosX(), p.getPosY())) {
                     printPlanetMenu(playerShip, p);
                     break;
+                }
+            }
+            for(Asteroidenfeld af : astroidFields) {
+                if (playerShip.validatePosition(af.getPosX(), af.getPosY())) {
+                    System.out.println("Dein Schiff ist in ein Asteroidenfeld geraten.");
+                    af.crossField(playerShip);
+                    System.out.println("Verbleibende HP: " + playerShip.getHealthPoints());
                 }
             }
             if (playerShip.getHealthPoints() <= 0) {

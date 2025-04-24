@@ -109,6 +109,9 @@ public class Raumschiff {
     public int getHealthPoints(){
         return this.HealthPoints;
     }
+    public void setHealthPoints(int value){
+        this.HealthPoints = value;
+    }
 
 }
 
