@@ -8,13 +8,13 @@ public class Sonnensystem {
         Scanner scan = new Scanner(System.in);
 
         //Captains
-        Kapitaen alexiaNova = new Kapitaen("Alexia Nova", 7, 7);
-        Kapitaen admiralZenithNightfall = new Kapitaen("Admiral Zenith Nightfall", 5, 10);
+        Kapitaen alexiaNova = new Kapitaen("Alexia Nova", 7, 7, 1000);
+        Kapitaen admiralZenithNightfall = new Kapitaen("Admiral Zenith Nightfall", 5, 10, 100);
 
         //Ships
         ships = new ArrayList<>();
-        ships.add(new Raumschiff("Eos Nova", 0, 0, alexiaNova));
-        ships.add(new Raumschiff("Aurora Quest", 0, 2, admiralZenithNightfall));
+        ships.add(new Raumschiff("Eos Nova", 0, 0, alexiaNova, 30));
+        ships.add(new Raumschiff("Aurora Quest", 0, 2, admiralZenithNightfall, 10));
 
         //Planets
         ArrayList<Planet> planets = new ArrayList<>();
@@ -33,17 +33,17 @@ public class Sonnensystem {
 
 
         //Cargo
-        Ladung stones = new Ladung("Steine", 3);
-        Ladung iron = new Ladung("Eisen", 1);
-        Ladung gold = new Ladung("Gold", 2);
-        Ladung aluminium = new Ladung("Aluminium", 1);
+        Ladung stones = new Ladung("Steine", 3, 2, 3.0);
+        Ladung iron = new Ladung("Eisen", 1, 2, 5.0);
+        Ladung gold = new Ladung("Gold", 2, 2, 4.0);
+        Ladung aluminium = new Ladung("Aluminium", 1, 2, 6.0);
 
         //Add Cargo to planets
         for (Planet p : planets) {
-            p.addCargo(stones);
-            p.addCargo(iron);
-            p.addCargo(gold);
-            p.addCargo(aluminium);
+            p.getHandelsstation().addCargo(stones);
+            p.getHandelsstation().addCargo(iron);
+            p.getHandelsstation().addCargo(gold);
+            p.getHandelsstation().addCargo(aluminium);
         }
         Raumschiff playerShip = ships.getFirst();
         alexiaNova.setName("Alexia Starlight Nova");
@@ -55,12 +55,9 @@ public class Sonnensystem {
         while (!gameOver) {
 
             playerShip.fly(scan.next().charAt(0));
-            playerShip.receiveCargo(iron);
-            playerShip.deliverCargo(iron);
             //check for ship encounter
             for (Raumschiff r : ships) {
                 if (playerShip != r && playerShip.validatePosition(r.getPosX(), r.getPosY())) {
-                    System.out.println("Hier ist das Raumschiff " + r.getName());
                     printShipMenu(playerShip, r);
                     break;
                 }
@@ -85,37 +82,92 @@ public class Sonnensystem {
         }
         System.out.println("Das Spiel ist beendet, du bist gestorben");
     }
-    private static void printPlanetMenu(Raumschiff playerShip, Planet p){
+
+    private static void printTradingStationMenu(Planet p, Raumschiff playerShip){
         boolean isDone = false;
-        while (!isDone) { 
-            ConsoleHelper.header("Hier ist der Planet " + p.getName() + ", Atmosphäre: " + p.getAtmosphere());
-            ConsoleHelper.printMenuElement(1, "Ladung Abholen");
-            ConsoleHelper.printMenuElement(2, "Ladung Einladung");
-            ConsoleHelper.printMenuElement(3, "Wegfliegen");
-            int choice1 = ConsoleHelper.inputInt("Wählen sie:", 1, 3);
-            int choice2;
-            Ladung selectedCargo;
+        while (!isDone){
+            ConsoleHelper.header("Hier ist die Handelsstation " + p.getHandelsstation().getName());
+            ConsoleHelper.printMenuElement(1, "Ladung Kaufen");
+            ConsoleHelper.printMenuElement(2, "Ladung Verkaufen");
+            ConsoleHelper.printMenuElement(3, "Ladung Anzeigen");
+            ConsoleHelper.printMenuElement(4, "Wegfliegen");
+            int choice1 = ConsoleHelper.inputInt("Wählen sie:", 1, 4);
             switch (choice1) {
                 case 1 -> {
-                    choice2 = ConsoleHelper.printMenu("Gegenstand von Planet", p.getCargoList());
-                    selectedCargo = p.getCargoList().get(choice2-1);
-                    playerShip.receiveCargo(selectedCargo);
-                    p.removeCargo(selectedCargo);
+                    if (p.getHandelsstation().getCargoList().isEmpty()) {
+                        System.out.println("Die Handelsstation bietet keine Waren zum kauf an.");
+                    } else {
+                        buyCargo(playerShip, p);
+                    }
                 }
                 case 2 -> {
-                    choice2 = ConsoleHelper.printMenu("Gegenstand von Planet", playerShip.getCargoList());
-                    selectedCargo = playerShip.getCargoList().get(choice2-1);
-                    playerShip.deliverCargo(selectedCargo);
-                    p.addCargo(selectedCargo);
+                    if (playerShip.getCargoList().isEmpty()) {
+                        System.out.println("Du hast keine Waren zum Verkaufen.");
+                    } else {
+                        sellCargo(playerShip, p);
+                    }
                 }
                 case 3 -> {
+                    ConsoleHelper.printMenuItems("Gegenstände in der Handelsstation", p.getHandelsstation().getCargoList().toArray());
+                }
+                case 4 -> {
                     isDone = true;
                     break;
                 }
                 default -> {
                 }
             }
+        }
+    }
+
+    private static void printPlanetMenu(Raumschiff playerShip, Planet p){
+        boolean isDone = false;
+        while (!isDone) { 
+            ConsoleHelper.header("Hier ist der Planet " + p.getName() + ", Atmosphäre: " + p.getAtmosphere());
+            ConsoleHelper.printMenuElement(1, "Handelsstation anfliegen");
+            ConsoleHelper.printMenuElement(2, "Wegfliegen");
+            int choice1 = ConsoleHelper.inputInt("Wählen sie:", 1, 2);
+            switch (choice1) {
+                case 1 -> {
+                    printTradingStationMenu(p, playerShip);
+                }
+                case 2 -> {
+                    isDone = true;
+                }
+                default -> {
+                }
+            }
             
+        }
+    }
+
+    private static void sellCargo(Raumschiff playerShip, Planet p) {
+        int choice2;
+        Ladung selectedCargo;
+        
+        choice2 = ConsoleHelper.printMenu("Ladung -> Handelsstation", playerShip.getCargoList());
+        selectedCargo = playerShip.getCargoList().get(choice2-1);
+        
+        playerShip.getCaptain().sellCargo(selectedCargo);
+        playerShip.deliverCargo(selectedCargo);
+        p.getHandelsstation().addCargo(selectedCargo);
+        System.out.println("Ware verkauft, verbeleibendes Geld: " + playerShip.getCaptain().getMoney());
+    }
+    private static void buyCargo(Raumschiff playerShip, Planet p) {
+        int choice2;
+        Ladung selectedCargo;
+        choice2 = ConsoleHelper.printMenu("Ladung -> Raumschiff", p.getHandelsstation().getCargoList());
+        selectedCargo = p.getHandelsstation().getCargoList().get(choice2-1);
+        if (playerShip.getCaptain().getMoney() < selectedCargo.getPrice()) {
+            System.out.println("Du hast zu wenig Geld:" + playerShip.getCaptain().getMoney());
+        } else if (!playerShip.receiveCargo(selectedCargo)) {
+            System.out.println("Du hast nicht genügend Platz, verbleibende Kapazität: " + (playerShip.getCapacity() - playerShip.calculateCargoWeight()));
+        } else{
+            playerShip.getCaptain().buyCargo(selectedCargo);
+            playerShip.receiveCargo(selectedCargo);
+            p.getHandelsstation().removeCargo(selectedCargo);
+            System.out.println("Ware gekauft, verbeleibendes Geld: " + playerShip.getCaptain().getMoney());
+            System.out.println("Verbleibende Kapazität: " + playerShip.calculateCargoWeight());
         }
     }
     public static void printShipMenu(Raumschiff playerShip, Raumschiff enemyShip){

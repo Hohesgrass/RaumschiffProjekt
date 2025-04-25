@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.Scanner;
 
 /**
@@ -66,6 +65,7 @@ public class ConsoleHelper {
     public static int printMenu(String header, ArrayList txt) {
         return printMenu(header, txt.toArray());
     }
+    
 
     /**
      * Generate a menu for this Array
@@ -81,7 +81,13 @@ public class ConsoleHelper {
         }
         return inputInt("Wählen Sie", 1, txt.length);
     }
-
+    public static void printMenuItems(String header, Object... txt) {
+        header(header);
+        int c = 1;
+        for (Object s: txt) {
+            printMenuElement(c++,s.toString());
+        }
+    }
     /**
      * Print a message normal or as error, if success is false
      * @param txt, text to print

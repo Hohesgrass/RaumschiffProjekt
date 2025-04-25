@@ -7,6 +7,7 @@ public class Raumschiff {
     private int PosY;
     private Kapitaen captain;
     private ArrayList<Ladung> cargoList = new ArrayList<>();
+    private int capacity;
     private int HealthPoints;
     private int energySupply;
     private int energyShield;
@@ -14,12 +15,13 @@ public class Raumschiff {
     private int maneuverability;
 
 
-    public Raumschiff(String name, int PosX, int PosY, Kapitaen captain) {
+    public Raumschiff(String name, int PosX, int PosY, Kapitaen captain, int capacity) {
         this.name = name;
         this.PosX = PosX;
         this.PosY = PosY;
         this.captain = captain;
         this.HealthPoints = 100;
+        this.capacity = capacity;
     }
     public void fly(char direction) {
         switch (direction) {
@@ -55,10 +57,7 @@ public class Raumschiff {
         if (finalDamage >= this.HealthPoints) {
             finalDamage = 10000;
         }
-        //System.out.println("HP: " + this.HealthPoints);
-        //System.out.println("Damage:" + finalDamage);
         this.HealthPoints -= finalDamage;
-        //System.out.println("HP after attack: " + this.HealthPoints);
     }
     public void rechargeShield() {
         this.energyShield =+ 2;
@@ -69,14 +68,27 @@ public class Raumschiff {
     public boolean validatePosition(int x, int y) {
         return x == this.getPosX() && y == this.getPosY();
     }
-    public void deliverCargo(Ladung ladung) {
+    public boolean deliverCargo(Ladung ladung) {
         this.cargoList.remove(ladung);
+        return true;
     }
-    public void receiveCargo(Ladung ladung) {
-        this.cargoList.add(ladung);
+    public boolean receiveCargo(Ladung ladung) {
+        if (calculateCargoWeight() + ladung.getWeight() * ladung.getEinheiten() > this.capacity) {
+            return false;
+        } else {
+            this.cargoList.add(ladung);
+            return true;
+        }
     }
     public ArrayList<Ladung> getCargoList() {
         return cargoList;
+    }
+    public int calculateCargoWeight(){
+        int currentWeight = 0;
+        for (Ladung ladung : cargoList){
+            currentWeight += ladung.getWeight() * ladung.getEinheiten();
+        }   
+        return currentWeight;
     }
     public int getManeuverability(){
         return this.maneuverability;
@@ -111,6 +123,9 @@ public class Raumschiff {
     }
     public void setHealthPoints(int value){
         this.HealthPoints = value;
+    }
+    public int getCapacity(){
+        return this.capacity;
     }
 
 }

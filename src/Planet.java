@@ -1,4 +1,3 @@
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Planet {
@@ -7,6 +6,7 @@ public class Planet {
     private int posX;
     private int posY;
     private ArrayList<Ladung> cargoList = new ArrayList<>();
+    private Handelsstation hs = new Handelsstation("name");
     public Planet(String name, boolean atmosphere, int posX, int posY) {
         this.name = name;
         this.atmosphere = atmosphere;
@@ -48,5 +48,8 @@ public class Planet {
     }
     public void setPosY(int posY) {
         this.posY = posY;
+    }
+    public Handelsstation getHandelsstation(){
+        return this.hs;
     }
 }
